@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We"
+          crossorigin="anonymous">
+    <title>BansonJ의 게시판</title>
+</head>
+<body>
+<h1 class="nav justify-content-center"><a style="color:#000000" class="nav-link" th:href="@{/}">게시판</a></h1>
+
+<br>
+<br>
+
+<form class="row g-3" th:action="@{/register}" method="post" style="margin-left: 30px">
+    <div class="col-sm-7">
+        <label class="form-label">email:</label>
+        <input class="form-control" type="email" th:value="${memberForm.email}" name="email">
+        <span th:text="${valid_email}"></span>
+    </div>
+    <div class="col-sm-7">
+        <label class="form-label">password:</label>
+        <input class="form-control" type="password" name="password">
+        <span th:text="${valid_password}"></span>
+    </div>
+    <div class="col-sm-7">
+        <label class="form-label">닉네임:</label>
+        <input class="form-control" type="text" th:value="${memberForm.nickname}" name="nickname">
+        <span th:text="${valid_nickname}"></span>
+    </div>
+    <div>
+    <button class="btn btn-outline-dark" type="submit">회원가입</button>
+    </div>
+    <div>
+        <a class="btn btn-primary btn-sm" th:href="@{/oauth2/authorization/google}">구글로그인</a>
+    </div>
+</form>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj"
+        crossorigin="anonymous"></script>
+
+</body>
+</html>
