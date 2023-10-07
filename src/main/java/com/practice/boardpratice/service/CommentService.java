@@ -6,6 +6,7 @@ import com.practice.boardpratice.domain.Member;
 import com.practice.boardpratice.repository.CommentRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -26,6 +27,7 @@ public class CommentService {
                 comment(comment)
                 .member(member)
                 .board(board)
+                .createDate(LocalDate.now())
                 .build();
 
         commentRepository.save(comments);

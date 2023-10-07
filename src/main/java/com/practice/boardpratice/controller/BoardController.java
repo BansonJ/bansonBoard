@@ -1,15 +1,18 @@
 package com.practice.boardpratice.controller;
 
+import com.practice.boardpratice.Weather.Weather;
 import com.practice.boardpratice.domain.Board;
 import com.practice.boardpratice.domain.Comment;
 import com.practice.boardpratice.domain.Member;
 import com.practice.boardpratice.dto.MemberForm;
 import com.practice.boardpratice.dto.PrincipalDetails;
+import com.practice.boardpratice.dto.WeatherInfo;
 import com.practice.boardpratice.service.BoardService;
 import com.practice.boardpratice.service.CommentService;
 import com.practice.boardpratice.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import net.minidev.json.parser.ParseException;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -21,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -30,17 +34,19 @@ public class BoardController {
     private final BoardService boardService;
     private final UserService userService;
     private final CommentService commentService;
+    private final Weather weather;
 
-    public BoardController(BoardService boardService, UserService userService, CommentService commentService) {
+    public BoardController(BoardService boardService, Weather weather, UserService userService, CommentService commentService) {
         this.boardService = boardService;
         this.userService = userService;
         this.commentService = commentService;
+        this.weather = weather;
     }
 
     //메인화면
     @GetMapping("/")
     public String home(Model model, Authentication authentication,
-                       @RequestParam(value = "page", defaultValue = "1") int page) {
+                       @RequestParam(value = "page", defaultValue = "1") int page) throws IOException, ParseException {
         Page<Board> boards = boardService.getAllBoard(page-1);
         model.addAttribute("boards", boards);
 
@@ -48,7 +54,23 @@ public class BoardController {
             Member member = memberInfo(authentication);
             model.addAttribute("nickname", member.getNickname());
         }
+        List<String> weather = Weather.lookUpWeather();
+        weather.toArray();
 
+        ArrayList<String> tmp = new ArrayList<>();
+        ArrayList<String> pcp = new ArrayList<>();
+        ArrayList<WeatherInfo> weatherInfo = new ArrayList<>();
+        WeatherInfo weatherInfo1 = new WeatherInfo();
+
+        for (int i = 1; i < weather.size(); i++) {
+            if (i % 2 == 0) {
+                weatherInfo1.setPcp(weather.get(i-1));
+                weatherInfo1.setTmp(weather.get(i));
+                weatherInfo.add(weatherInfo1);
+            }
+        }
+
+        model.addAttribute("weatherInfo", weatherInfo);
         return "main/home";
     }
 

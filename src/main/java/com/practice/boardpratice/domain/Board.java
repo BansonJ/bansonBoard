@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 
+import java.time.LocalDate;
+
 @Entity
 @Builder
 @AllArgsConstructor
@@ -17,6 +19,7 @@ public class Board {
     private String title;
     @NotEmpty
     private String word;
+    private LocalDate createDate;
 
     public void setTitle(String title) {
         this.title = title;

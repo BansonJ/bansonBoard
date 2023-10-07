@@ -6,6 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.cglib.core.Local;
+
+import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -20,6 +23,7 @@ public class Comment {
 
     @NotEmpty
     private String comment;
+    private LocalDate createDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Board board;
