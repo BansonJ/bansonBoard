@@ -55,20 +55,11 @@ public class BoardController {
             model.addAttribute("nickname", member.getNickname());
         }
         List<String> weather = Weather.lookUpWeather();
-        weather.toArray();
+        WeatherInfo weatherInfo = new WeatherInfo();
 
-        ArrayList<String> tmp = new ArrayList<>();
-        ArrayList<String> pcp = new ArrayList<>();
-        ArrayList<WeatherInfo> weatherInfo = new ArrayList<>();
-        WeatherInfo weatherInfo1 = new WeatherInfo();
-
-        for (int i = 1; i < weather.size(); i++) {
-            if (i % 2 == 0) {
-                weatherInfo1.setPcp(weather.get(i-1));
-                weatherInfo1.setTmp(weather.get(i));
-                weatherInfo.add(weatherInfo1);
-            }
-        }
+        weatherInfo.setTmp(weather.get(0));
+        weatherInfo.setPcp(weather.get(1));
+        weatherInfo.setTime(weather.get(2));
 
         model.addAttribute("weatherInfo", weatherInfo);
         return "main/home";

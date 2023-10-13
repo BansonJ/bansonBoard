@@ -13,6 +13,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -23,25 +24,44 @@ public class Weather {
         String nx = "57";    //위도
         String ny = "124";    //경도
         String baseDate;    //조회하고싶은 날짜
-        String[] baseTime = {"0200", "0500", "0800", "1100", "1400", "1700", "2000", "2300"};    //조회하고싶은 시간
+        String baseTime = null;    //조회하고싶은 시간
         String type = "json";    //조회하고 싶은 type(json, xml 중 고름)
+
         SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
         Date date = new Date();
-        String now = format.format(date);
+        String Dnow = format.format(date);
+        baseDate = Dnow;
+
         List<String> result1 = new ArrayList<>();
-        baseDate = now;
+
+        LocalTime localTime = LocalTime.now();
+        String Tnow = localTime.toString().substring(0,2);
+        int time = Integer.parseInt(Tnow);
+
+        if (time == 0 || time == 1) {
+            baseTime = "02";
+        } else if (time == 24) {
+            baseTime = "23";
+        } else if (time % 3 == 2) {
+            baseTime = String.valueOf(time);
+        } else if (time % 3 == 1) {
+            baseTime = String.valueOf(time-2);
+        } else if (time % 3 == 0) {
+            baseTime = String.valueOf(time-1);
+        }
+
+
 //		참고문서에 있는 url주소
         String apiUrl = "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst";
 //         홈페이지에서 받은 키
         String serviceKey = "sdX40IrfRCRbZYMRwkzpoUArDZuvCfPBVWf3vtODLYNKQ1JJJsbUbDhencXtgcukktr4dJDPK5WZA0TANdvCjw%3D%3D";
 
-        for (int i = 0;i<8;i++) {
             StringBuilder urlBuilder = new StringBuilder(apiUrl);
             urlBuilder.append("?" + URLEncoder.encode("ServiceKey", "UTF-8") + "=" + serviceKey);
             urlBuilder.append("&" + URLEncoder.encode("nx", "UTF-8") + "=" + URLEncoder.encode(nx, "UTF-8")); //경도
             urlBuilder.append("&" + URLEncoder.encode("ny", "UTF-8") + "=" + URLEncoder.encode(ny, "UTF-8")); //위도
             urlBuilder.append("&" + URLEncoder.encode("base_date", "UTF-8") + "=" + URLEncoder.encode(baseDate, "UTF-8")); /* 조회하고싶은 날짜*/
-            urlBuilder.append("&" + URLEncoder.encode("base_time", "UTF-8") + "=" + URLEncoder.encode(baseTime[i], "UTF-8")); /* 조회하고싶은 시간 AM 02시부터 3시간 단위 */
+            urlBuilder.append("&" + URLEncoder.encode("base_time", "UTF-8") + "=" + URLEncoder.encode(baseTime+"00", "UTF-8")); /* 조회하고싶은 시간 AM 02시부터 3시간 단위 */
             urlBuilder.append("&" + URLEncoder.encode("dataType", "UTF-8") + "=" + URLEncoder.encode(type, "UTF-8"));    /* 타입 */
             /*
              * GET방식으로 전송해서 파라미터 받아오기
@@ -79,9 +99,6 @@ public class Weather {
 
             JSONObject response = (JSONObject) jsonObject.get("response");
             JSONObject body = (JSONObject) response.get("body");
-            if (body == null){
-                break;
-            }
             JSONObject items = (JSONObject) body.get("items");
             JSONArray item = (JSONArray) items.get("item");
 
@@ -100,7 +117,7 @@ public class Weather {
                     result1.add(PCP);
                 }
             }
-        }
+            result1.add(baseTime);
         return result1;
     }
 }
